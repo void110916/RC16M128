@@ -1,5 +1,5 @@
 #include "c4mlib.h"
-#include "RC_Lib_test.h"
+#include "RC16M128_Lib.h"
 
 
 // Global value define:
@@ -178,6 +178,7 @@ ISR( TIMER3_COMPA_vect )
 			_case2_Timer_Init;
 			CaseCount = 2;
 			ServoPeriodCount = 0;
+			RealTimeFunc();
 		}
 		ServoPeriodCount++;
 	}
