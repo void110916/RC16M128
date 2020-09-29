@@ -1,10 +1,7 @@
-#ifndef __RC16M128_LIB_H__
-#define __RC16M128_LIB_H__
+#ifndef __RC_LIB_TEST_H__
+#define __RC_LIB_TEST_H__
 
 #include "c4mlib.h"
-//#include <avr\io.h>
-//#include <avr\interrupt.h>
-//#include <util\delay.h>
 
 //函式原型
 char ASA_RC16M128_set(void);
@@ -24,7 +21,6 @@ char RC16M128_Servo_set(char LSByte, char Mask, char shift, char Data);
 #define ServoDDRH  DDRC	// High Byte S9~S16
 #define ServoPORTH PORTC
 #define ServoNum 16
-#define ServoBasePeriod 899
 
 
 #endif
