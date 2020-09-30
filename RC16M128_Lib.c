@@ -8,6 +8,7 @@ volatile uint8_t ServoPeriodCount = 1;
 uint16_t ServoCommand[128] = {0};
 uint16_t dat[6] = {0};
 
+//除頻: 8 , ocr: 690 , 週期: 0.499855 ms , error: 0.145us
 #define _case0_Timer_Init        \
 	REGFPT(&ETIMSK, 0x10, 4, 0); \
 	REGFPT(&TCCR3B, 0x07, 0, 2); \
@@ -15,7 +16,7 @@ uint16_t dat[6] = {0};
 	TCNT3 = 0;                   \
 	REGFPT(&ETIMSK, 0x10, 4, 1); 
 
-
+//除頻: 64 , ocr: 2 , 週期: 17.361*115 us(1.996528 us) , error: 3.472us
 #define _case1_Timer_Init        \
 	REGFPT(&ETIMSK, 0x10, 4, 0); \
 	REGFPT(&TCCR3B, 0x07, 0, 3); \
@@ -23,7 +24,7 @@ uint16_t dat[6] = {0};
 	TCNT3 = 0;                   \
 	REGFPT(&ETIMSK, 0x10, 4, 1); 
 
-
+//除頻: 1024 , ocr: 188 , 週期: 17.5 ms , error: 0 us
 #define _case2_Timer_Init        \
 	REGFPT(&ETIMSK, 0x10, 4, 0); \
 	REGFPT(&TCCR3B, 0x07, 0, 5); \
@@ -98,8 +99,6 @@ char RC16M128_Servo_get(char LSByte, char Bytes, void* Data_p)
 	for(i=0; i<Bytes; i++)
 	((unsigned char*)Data_p)[i] = ServoCommand[LSByte+i];
 
-
-
 	// Put跟Set回應
 	if( RegMode == 0 )
 	for(i=0; i<Bytes; i++)
@@ -153,11 +152,16 @@ ISR( TIMER3_COMPA_vect )
 	//       _____ _________                       _____ _________                       _____ ______
 	// _____|     |_________|_____________________|     |_________|_____________________|     |______
 	//      |<-0->|<---1--->|<---------2--------->|
-	//      
-	// 1: ServoCommand		0~120
-	//    Period Range  0.5ms~2.5ms 
-	// 2: ServoPeriodCount	0~1199
-	// ServoBasePeriod: 1200 = PWM one Wave(2) Frequency: 50Hz(20ms)
+	// 
+	// 0: 電位拉高   
+	//    經過時間: 0.5 ms  
+	// 1: 依角度拉低
+	//    分割: 115份
+	//    經過時間: 2 ms 
+	// 2: 電位拉低
+	//    經過時間: 17.5 ms
+	// PWM one Wave(2) Frequency: 50Hz(20ms)
+
 
 	if (CaseCount==0)
 	{
@@ -178,7 +182,7 @@ ISR( TIMER3_COMPA_vect )
 			_case2_Timer_Init;
 			CaseCount = 2;
 			ServoPeriodCount = 0;
-			RealTimeFunc();
+			realTimeFunc();
 		}
 		ServoPeriodCount++;
 	}
@@ -189,4 +193,5 @@ ISR( TIMER3_COMPA_vect )
 		_case0_Timer_Init;
 		CaseCount = 0;
 	}
+	
 }
