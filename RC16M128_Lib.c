@@ -55,7 +55,6 @@ char ASA_RC16M128_set(void)
 {
 	RC16M128_Servo_Init();
 	sei();
-	
 	return 0;
 }
 
